@@ -70,7 +70,7 @@ jobs:
 
           
     - name: Apply SUSFS Patches for KernelSU Variants
-        run: |
+      run: |
           cd kernel-6.6
           
           # Apply core SUSFS patches
@@ -99,29 +99,29 @@ jobs:
           cp ../../kernel_patches/wild/susfs_fix_patches/v1.5.9/fix_kernel_compat.c.patch ./
           patch -p1 --forward < fix_kernel_compat.c.patch
 
-      - name: Getting KernelSU Version
-        run: |
+    - name: Getting KernelSU Version
+      run: |
           cd "kernel-6.6/Wild_KSU/kernel"
           BASE_VERSION=10200
           COMMIT_COUNT=$(/usr/bin/git rev-list --count HEAD)
           KSU_VERSION=$(expr $COMMIT_COUNT "+" $BASE_VERSION)
           echo "KSUVER=$KSU_VERSION" >> $GITHUB_ENV
           
-      - name: Apply Hooks Patches
-        run: |
+    - name: Apply Hooks Patches
+      run: |
           cd "$kernel-6.6/common"
           cp ../../kernel_patches/wild/hooks/scope_min_manual_hooks_v1.4.patch ./
           patch -p1 --forward -F 3 < scope_min_manual_hooks_v1.4.patch
 
-      - name: Apply Hide Stuff Patches
-        run: |
+    - name: Apply Hide Stuff Patches
+      run: |
           cd "$kernel-6.6/common"
           cp ../../kernel_patches/69_hide_stuff.patch ./
           patch -p1 --forward -F 3 < 69_hide_stuff.patch
 
-      - name: Fix WiFi and Bluetooth on Samsung 6.6 GKI devices
-        if: ${{ ( inputs.kernel_version == '6.6' ) }}
-        run: |
+    - name: Fix WiFi and Bluetooth on Samsung 6.6 GKI devices
+      if: ${{ ( inputs.kernel_version == '6.6' ) }}
+      run: |
           SYMBOL_LIST=$CONFIG/common/android/abi_gki_aarch64_galaxy
           echo "kdp_set_cred_non_rcu" >> $SYMBOL_LIST
           echo "kdp_usecount_dec_and_test" >> $SYMBOL_LIST
@@ -137,8 +137,8 @@ jobs:
           cp "../../../kernel_patches/samsung/min_kdp/min_kdp.c" min_kdp.c
           echo "obj-y += min_kdp.o" >> Makefile
 
-      - name: Apply Kernel Configuration
-        run: |
+    - name: Apply Kernel Configuration
+      run: |
           cd "$kernel-6.6"
           
           defconfig="./common/arch/arm64/configs/gki_defconfig"
@@ -212,10 +212,10 @@ jobs:
           
           # Remove check_defconfig
           #sed -i 's/check_defconfig//' ./common/build.config.gki
-        fi
-        kernelVersion=$(cd kernel-6.6 && make kernelversion && cd ..)
-        [ -f $(pwd)/build_kernel.sh ] && bash build_kernel.sh || exit 1
-        cd out && find . -type f -name "Image.gz" && cd ..
-        gitsha1=$(git rev-parse --short HEAD)
-        buildDetails="$kernelVersion-A055X_`echo $gitsha1`-`date +'%Y%m%d%H%M%S'`" && echo "buildDetails=$buildDetails" >> $GITHUB_OUTPUT
+          fi
+          kernelVersion=$(cd kernel-6.6 && make kernelversion && cd ..)
+          [ -f $(pwd)/build_kernel.sh ] && bash build_kernel.sh || exit 1
+          cd out && find . -type f -name "Image.gz" && cd ..
+          gitsha1=$(git rev-parse --short HEAD)
+          buildDetails="$kernelVersion-A055X_`echo $gitsha1`-`date +'%Y%m%d%H%M%S'`" && echo "buildDetails=$buildDetails" >> $GITHUB_OUTPUT
       working-directory: kernel_root
