@@ -8,7 +8,7 @@ on:
         required: true
       URL:
         description: Repository URL
-        default: 'https://github.com/rsuntkOrgs/android_kernel_samsung_a05m-6.6.git'
+        default: 'https://github.com/mads2570/android_kernel_samsung_a05m-6.6.git'
         required: true
       KSU:
         description: Add KernelSU support
